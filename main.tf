@@ -1,27 +1,10 @@
-
-variable "image_name" {
-    default ="ghost:latest"
-  
+resource "aws_instance" "instance" {
+  ami = "${var.ami}"
+  instance_type = "${var.instance_type}"
+  subnet_id = "${var.subnet_id}"
+  count = "${var.instace_count}"
+  security_groups = ["${var.security_group}"]
+  tags = {
+    Name = "Server ${count.index}"
+  }
 }
-variable "container_name" {
-  default ="ghost_blog"
-}
-
-variable "ext_port" {
-  default ="80"
-}
-
-#Download latest ghost image
-resource "docker_image" "ghost_image" {
-    name = "${var.image_name}"
-}
-
-resource "docker_container" "ghost_container" {
-    name = "${var.container_name}"
-    image = "${docker_image.ghost_image.latest}"
-    ports {
-        internal = "2368"
-        external = "${var.ext_port}"
-    }
-}
-
